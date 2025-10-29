@@ -1,0 +1,74 @@
+#include <iostream>
+#include <string>
+
+// Use the standard namespace to avoid prefixing with std::
+using namespace std;
+
+// Abstract Base Class from part (a)
+class Vehicle {
+public:
+    Vehicle(string make, string model, int year)
+        : make(make), model(model), year(year) {}
+    virtual ~Vehicle() = default;
+    virtual double calculateRentalCost() const = 0; // Pure virtual function
+
+protected:
+    string make;
+    string model;
+    int year;
+};
+
+// --- Derived Class: Car ---
+class Car : public Vehicle {
+public:
+    Car(string make, string model, int year, int doors)
+        : Vehicle(make, model, year), numDoors(doors) {}
+
+    double calculateRentalCost() const override {
+        return 50.0 + (numDoors * 5.0); // Base cost + cost per door
+    }
+
+private:
+    int numDoors;
+};
+
+// --- Derived Class: SUV ---
+class SUV : public Vehicle {
+public:
+    SUV(string make, string model, int year, bool awd)
+        : Vehicle(make, model, year), allWheelDrive(awd) {}
+
+    double calculateRentalCost() const override {
+        return 75.0 + (allWheelDrive ? 20.0 : 0.0); // Base cost + AWD surcharge
+    }
+
+private:
+    bool allWheelDrive;
+};
+
+// --- Derived Class: Truck ---
+class Truck : public Vehicle {
+public:
+    Truck(string make, string model, int year, double capacity)
+        : Vehicle(make, model, year), cargoCapacity(capacity) {}
+
+    double calculateRentalCost() const override {
+        return 100.0 + (cargoCapacity * 30.0); // Base cost + cost per ton
+    }
+
+private:
+    double cargoCapacity; // in tons
+};
+
+// Main function for a simple test
+int main() {
+    Car myCar("Toyota", "Camry", 2023, 4);
+    SUV mySUV("Jeep", "Wrangler", 2022, true);
+    Truck myTruck("Ford", "F-150", 2023, 2.5);
+
+    cout << "Car daily cost: $" << myCar.calculateRentalCost() << endl;
+    cout << "SUV daily cost: $" << mySUV.calculateRentalCost() << endl;
+    cout << "Truck daily cost: $" << myTruck.calculateRentalCost() << endl;
+
+    return 0;
+}
