@@ -103,4 +103,29 @@ int main() {
         double essayScore = essayExam.gradeExam();
         cout << "Result: Final Score = " << essayScore << "/100" << endl;
 
-        cout
+        cout << "\n--- SCENARIO 3: Essay Exam (Invalid Grading) ---" << endl;
+        EssayExam badEssayExam("ENG301", "Shakespearean Studies", 150, "Hamlet's Soliloquy");
+        badEssayExam.displayDetails();
+        cout << "User will now enter an invalid score (e.g., -5)..." << endl;
+        double badEssayScore = badEssayExam.gradeExam();
+        cout << "Result: Final Score = " << badEssayScore << "/100" << endl;
+
+    } catch (const InvalidExamDurationException& e) {
+        cerr << "\n" << e.what() << endl;
+    } catch (const GradingErrorException& e) {
+        cerr << "\n" << e.what() << endl;
+    }
+
+    try {
+        cout << "\n--- SCENARIO 4: Invalid Exam Creation ---" << endl;
+        cout << "Attempting to create an exam with negative duration..." << endl;
+        Exam* invalidExam = new MultipleChoiceExam("MATH404", "Advanced Calculus", -60, 30);
+        invalidExam->displayDetails();
+        delete invalidExam;
+    } catch (const InvalidExamDurationException& e) {
+        cerr << "\n" << e.what() << endl;
+    }
+
+    cout << "\n===== Program Finished =====" << endl;
+    return 0;
+}
