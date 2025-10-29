@@ -1,0 +1,51 @@
+#include <iostream>
+#include <string>
+#include <cstdlib>
+#include <ctime>
+#include <exception>
+#include <limits>
+
+using namespace std;
+
+class InvalidExamDurationException : public exception {
+public:
+    InvalidExamDurationException(const string& message) : msg(message) {}
+    const char* what() const noexcept override { return msg.c_str(); }
+private:
+    string msg;
+};
+
+class GradingErrorException : public exception {
+public:
+    GradingErrorException(const string& message) : msg(message) {}
+    const char* what() const noexcept override { return msg.c_str(); }
+private:
+    string msg;
+};
+
+class Exam {
+public:
+    Exam(string id, string sub, int dur)
+        : examID(id), subject(sub), duration(dur) {
+        if (duration <= 0) {
+            throw InvalidExamDurationException("Error: Exam duration must be a positive number.");
+        }
+    }
+    virtual ~Exam() = default;
+    virtual double gradeExam() const = 0;
+    void displayDetails() const {
+        cout << "\n-----------------------------" << endl;
+        cout << "Exam ID:   " << examID << endl;
+        cout << "Subject:   " << subject << endl;
+        cout << "Duration:  " << duration << " minutes" << endl;
+    }
+protected:
+    string examID;
+    string subject;
+    int duration;
+};
+
+class MultipleChoiceExam : public Exam {
+public:
+    MultipleChoiceExam(string id, string sub, int dur, int numQ)
+        : Exam
