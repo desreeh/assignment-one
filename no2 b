@@ -1,0 +1,51 @@
+#include <iostream>
+#include <string>
+using namespace std;
+class Exam {
+public:
+    Exam(string id, string sub, int dur)
+        : examID(id), subject(sub), duration(dur) {}
+    virtual ~Exam() = default;
+    virtual double gradeExam() const = 0; 
+
+protected:
+    string examID;
+    string subject;
+    int duration;
+};
+
+
+class MultipleChoiceExam : public Exam {
+public:
+    
+    MultipleChoiceExam(string id, string sub, int dur, int numQ)
+        : Exam(id, sub, dur), numQuestions(numQ) {}
+
+    double gradeExam() const override;
+
+private:
+    int numQuestions;
+};
+
+
+class EssayExam : public Exam {
+public:
+    EssayExam(string id, string sub, int dur, string top)
+        : Exam(id, sub, dur), topic(top) {}
+
+    double gradeExam() const override;
+
+private:
+    string topic;
+};
+int main() {
+    cout << "Creating instances of derived classes." << endl;
+    MultipleChoiceExam mcExam("CS101", "Introduction to C++", 120, 50);
+    cout << "MultipleChoiceExam 'CS101' created with 50 questions." << endl;
+    EssayExam essayExam("HIST201", "World History", 180, "The Causes of WWI");
+    cout << "EssayExam 'HIST201' created with topic 'The Causes of WWI'." << endl;
+
+    cout << "\nDerived classes created successfully. Next: implement gradeExam()." << endl;
+
+    return 0;
+}
