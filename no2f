@@ -1,0 +1,106 @@
+#include <iostream>
+#include <string>
+#include <cstdlib>
+#include <ctime>
+#include <exception>
+#include <limits>
+
+using namespace std;
+
+class InvalidExamDurationException : public exception {
+public:
+    InvalidExamDurationException(const string& message) : msg(message) {}
+    const char* what() const noexcept override { return msg.c_str(); }
+private:
+    string msg;
+};
+
+class GradingErrorException : public exception {
+public:
+    GradingErrorException(const string& message) : msg(message) {}
+    const char* what() const noexcept override { return msg.c_str(); }
+private:
+    string msg;
+};
+
+class Exam {
+public:
+    Exam(string id, string sub, int dur)
+        : examID(id), subject(sub), duration(dur) {
+        if (duration <= 0) {
+            throw InvalidExamDurationException("Error: Exam duration must be a positive number.");
+        }
+    }
+    virtual ~Exam() = default;
+    virtual double gradeExam() const = 0;
+    void displayDetails() const {
+        cout << "\n-----------------------------" << endl;
+        cout << "Exam ID:   " << examID << endl;
+        cout << "Subject:   " << subject << endl;
+        cout << "Duration:  " << duration << " minutes" << endl;
+    }
+protected:
+    string examID;
+    string subject;
+    int duration;
+};
+
+class MultipleChoiceExam : public Exam {
+public:
+    MultipleChoiceExam(string id, string sub, int dur, int numQ)
+        : Exam(id, sub, dur), numQuestions(numQ) {}
+    ~MultipleChoiceExam() override = default;
+    double gradeExam() const override;
+private:
+    int numQuestions;
+};
+
+class EssayExam : public Exam {
+public:
+    EssayExam(string id, string sub, int dur, string top)
+        : Exam(id, sub, dur), topic(top) {}
+    ~EssayExam() override = default;
+    double gradeExam() const override;
+private:
+    string topic;
+};
+
+double MultipleChoiceExam::gradeExam() const {
+    cout << "[INFO] Grading Multiple-Choice exam '" << examID << "'..." << endl;
+    int correctAnswers = rand() % (numQuestions + 1);
+    double score = (static_cast<double>(correctAnswers) / numQuestions) * 100.0;
+    cout << "[INFO] Simulated " << correctAnswers << " out of " << numQuestions << " correct answers." << endl;
+    return score;
+}
+
+double EssayExam::gradeExam() const {
+    cout << "[INFO] Grading Essay exam '" << examID << "' on topic: '" << topic << "'" << endl;
+    double score;
+    cout << "Please enter a score for the essay (0-100): ";
+    cin >> score;
+    if (cin.fail() || score < 0 || score > 100) {
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        throw GradingErrorException("Error: Invalid score entered. Must be a number between 0 and 100.");
+    }
+    return score;
+}
+
+int main() {
+    srand(time(0));
+    cout << "===== University Online Exam System =====" << endl;
+
+    try {
+        cout << "\n--- SCENARIO 1: Multiple-Choice Exam ---" << endl;
+        MultipleChoiceExam mcExam("CS101", "Introduction to C++", 120, 50);
+        mcExam.displayDetails();
+        double mcScore = mcExam.gradeExam();
+        cout << "Result: Final Score = " << mcScore << "/100" << endl;
+
+        cout << "\n--- SCENARIO 2: Essay Exam (Valid Grading) ---" << endl;
+        EssayExam essayExam("HIST201", "World History", 180, "The Causes of WWI");
+        essayExam.displayDetails();
+        double essayScore = essayExam.gradeExam();
+        cout << "Result: Final Score = " << essayScore << "/100" << endl;
+
+        cout
