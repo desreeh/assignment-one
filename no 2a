@@ -1,0 +1,29 @@
+#include <iostream>
+#include <string>
+using namespace std;
+
+class Exam {
+public:
+    Exam(string id, string sub, int dur);
+    virtual ~Exam() = default;
+    virtual double gradeExam() const = 0;
+
+protected:
+    // Attributes common to all exams
+    string examID;
+    string subject;
+    int duration; // in minutes
+};
+
+Exam::Exam(string id, string sub, int dur)
+    : examID(id), subject(sub), duration(dur) {
+    
+}
+
+int main() {
+    cout << "Testing the Exam abstract base class." << endl;
+ cout << "\nSuccessfully demonstrated that 'Exam' is an abstract class." << endl;
+    cout << "The next step is to create derived classes like 'MultipleChoiceExam'." << endl;
+
+    return 0;
+}
