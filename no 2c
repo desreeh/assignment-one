@@ -1,0 +1,90 @@
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+class Exam {
+public:
+    Exam(string id, string sub, int dur);
+    virtual ~Exam();
+    virtual double gradeExam() const = 0;
+
+protected:
+    string examID;
+    string subject;
+    int duration;
+};
+
+class MultipleChoiceExam : public Exam {
+public:
+    MultipleChoiceExam(string id, string sub, int dur, int numQ);
+    ~MultipleChoiceExam() override;
+    double gradeExam() const override;
+
+private:
+    int numQuestions;
+};
+
+class EssayExam : public Exam {
+public:
+    EssayExam(string id, string sub, int dur, string top);
+    ~EssayExam() override;
+    double gradeExam() const override;
+
+private:
+    string topic;
+};
+
+Exam::Exam(string id, string sub, int dur)
+    : examID(id), subject(sub), duration(dur) {
+    cout << "[INFO] Exam '" << examID << "' constructor called." << endl;
+}
+
+Exam::~Exam() {
+    cout << "[INFO] Exam '" << examID << "' base destructor called." << endl;
+}
+
+MultipleChoiceExam::MultipleChoiceExam(string id, string sub, int dur, int numQ)
+    : Exam(id, sub, dur),
+      numQuestions(numQ)
+{
+    cout << "[INFO] MultipleChoiceExam '" << examID << "' constructor called." << endl;
+}
+
+MultipleChoiceExam::~MultipleChoiceExam() {
+    cout << "[INFO] MultipleChoiceExam '" << examID << "' destructor called." << endl;
+}
+
+EssayExam::EssayExam(string id, string sub, int dur, string top)
+    : Exam(id, sub, dur),
+      topic(top)
+{
+    cout << "[INFO] EssayExam '" << examID << "' constructor called." << endl;
+}
+
+EssayExam::~EssayExam() {
+    cout << "[INFO] EssayExam '" << examID << "' destructor called." << endl;
+}
+
+double MultipleChoiceExam::gradeExam() const { return 0.0; }
+double EssayExam::gradeExam() const { return 0.0; }
+
+int main() {
+    cout << "===== Demonstrating Constructor and Destructor Calls =====" << endl;
+
+    cout << "\n--- Creating an EssayExam object on the stack ---" << endl;
+    {
+        EssayExam essayExam("ENG301", "English Literature", 150, "Shakespearean Tragedies");
+        cout << "Object 'essayExam' is now alive inside its scope." << endl;
+    }
+    cout << "Object 'essayExam' is now out of scope. Its destructor has been called." << endl;
+
+    cout << "\n--- Creating a MultipleChoiceExam object on the heap ---" << endl;
+    Exam* heapExam = new MultipleChoiceExam("CS101", "Computer Science", 120, 50);
+    cout << "Object 'heapExam' is now alive on the heap." << endl;
+    cout << "Deleting object 'heapExam'..." << endl;
+    delete heapExam;
+    cout << "Object 'heapExam' has been deleted." << endl;
+
+    return 0;
+}
