@@ -1,0 +1,74 @@
+#include <iostream>
+#include <string>
+#include <cstdlib>
+#include <ctime>
+
+using namespace std;
+
+class Exam {
+public:
+    Exam(string id, string sub, int dur)
+        : examID(id), subject(sub), duration(dur) {}
+    virtual ~Exam() = default;
+    virtual double gradeExam() const = 0;
+    void displayDetails() const {
+        cout << "\n-----------------------------" << endl;
+        cout << "Exam ID:   " << examID << endl;
+        cout << "Subject:   " << subject << endl;
+        cout << "Duration:  " << duration << " minutes" << endl;
+    }
+protected:
+    string examID;
+    string subject;
+    int duration;
+};
+
+class MultipleChoiceExam : public Exam {
+public:
+    MultipleChoiceExam(string id, string sub, int dur, int numQ)
+        : Exam(id, sub, dur), numQuestions(numQ) {}
+    ~MultipleChoiceExam() override = default;
+    double gradeExam() const override;
+private:
+    int numQuestions;
+};
+
+class EssayExam : public Exam {
+public:
+    EssayExam(string id, string sub, int dur, string top)
+        : Exam(id, sub, dur), topic(top) {}
+    ~EssayExam() override = default;
+    double gradeExam() const override;
+private:
+    string topic;
+};
+
+double MultipleChoiceExam::gradeExam() const {
+    cout << "[INFO] Grading Multiple-Choice exam '" << examID << "'..." << endl;
+    int correctAnswers = rand() % (numQuestions + 1);
+    double score = (static_cast<double>(correctAnswers) / numQuestions) * 100.0;
+    cout << "[INFO] Simulated " << correctAnswers << " out of " << numQuestions << " correct answers." << endl;
+    return score;
+}
+
+double EssayExam::gradeExam() const {
+    cout << "[INFO] Grading Essay exam '" << examID << "' on topic: '" << topic << "'" << endl;
+    double score;
+    cout << "Please enter a score for the essay (0-100): ";
+    cin >> score;
+    return score;
+}
+
+int main() {
+    srand(time(0));
+
+    cout << "===== Online Exam System: Grading Simulation =====" << endl;
+
+    cout << "\n--- Grading Multiple-Choice Exam ---" << endl;
+    MultipleChoiceExam mcExam("CS101", "Introduction to C++", 120, 50);
+    mcExam.displayDetails();
+    double mcScore = mcExam.gradeExam();
+    cout << "Result: Final Score = " << mcScore << "/100" << endl;
+
+    cout << "\n--- Grading Essay Exam ---" << endl;
+    EssayExam essayExam("HIST201", "World History", 180, "The Causes of WW
